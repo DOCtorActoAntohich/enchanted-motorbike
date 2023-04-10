@@ -6,6 +6,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    depends_on:
+      - manipulator
+      - redis
+    env_file:
+      - ".env"
     command: --controller
 
   manipulator:
@@ -14,10 +19,28 @@ services:
       context: .
       dockerfile: Dockerfile
     command: --manipulator
+    env_file:
+      - ".env"
 
   sensor:
     container_name: sensor
     build:
       context: .
       dockerfile: Dockerfile
+    depends_on:
+      - controller
     command: --sensor
+    env_file:
+      - ".env"
+
+  redis:
+    container_name: ${REDIS_HOST}
+    image: redis
+    restart: unless-stopped
+    command: --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - storage:/data:rw
+
+volumes:
+  storage:
+    driver: local

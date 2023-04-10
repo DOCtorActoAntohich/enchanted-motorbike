@@ -1,0 +1,1 @@
+from enchanted_motorbike.models.sensor_data import SensorData
