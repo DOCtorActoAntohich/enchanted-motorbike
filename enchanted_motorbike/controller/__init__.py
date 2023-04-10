@@ -1,0 +1,1 @@
+from enchanted_motorbike.controller.main import run_controller
