@@ -1,12 +1,13 @@
 import asyncio
 from datetime import datetime, timedelta
 
-import fastapi_utils.tasks
-
+from enchanted_motorbike.database import (
+    ManipulatorStatesRepository,
+    SensorDataRepository,
+)
 from enchanted_motorbike.models import ManipulatorStateDecision
 from enchanted_motorbike.settings import settings
 from enchanted_motorbike.time import utc_time_now
-from enchanted_motorbike.database import ManipulatorStatesRepository, SensorDataRepository
 
 
 async def run_decider_thing() -> None:
@@ -21,8 +22,11 @@ async def decide_manipulator_state() -> None:
 
     time_now = utc_time_now()
     new_state = await _calculate_new_state(
-        after=latest_decision.made_at if latest_decision is not None else time_now - timedelta(seconds=10),
-        before=time_now
+        after=latest_decision.made_at
+        if latest_decision is not None
+        else time_now
+        - timedelta(seconds=2 * settings.controller.decision_interval_seconds),
+        before=time_now,
     )
     if new_state is None:
         return

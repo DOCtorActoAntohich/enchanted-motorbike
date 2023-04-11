@@ -28,22 +28,18 @@ class SensorDataRepository:
         result = await self.__collection.delete_many({"observed_at": {"$lte": date}})
         return result.deleted_count
 
-    async def average(self, after: datetime, before: datetime) -> tuple[float, float] | None:
-        stage_filter = {
-            "$match": {
-                "observed_at": {"$gte": after, "$lte": before}
-            }
-        }
+    async def average(
+        self, after: datetime, before: datetime
+    ) -> tuple[float, float] | None:
+        stage_filter = {"$match": {"observed_at": {"$gte": after, "$lte": before}}}
         stage_group = {
-            "$group": {
-                "_id": {"$sum": 1},
-                "x": {"$avg": "$x"},
-                "y": {"$avg": "$y"}
-            }
+            "$group": {"_id": {"$sum": 1}, "x": {"$avg": "$x"}, "y": {"$avg": "$y"}}
         }
         pipeline = [stage_filter, stage_group]
         try:
-            result, *_ = await self.__collection.aggregate(pipeline).to_list(length=None)
+            result, *_ = await self.__collection.aggregate(pipeline).to_list(
+                length=None
+            )
         except ValueError:
             return None
         return result["x"], result["y"]

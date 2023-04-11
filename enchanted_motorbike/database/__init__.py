@@ -1,2 +1,2 @@
-from enchanted_motorbike.database.sensor_data_repository import SensorDataRepository
 from enchanted_motorbike.database.manipulator_state import ManipulatorStatesRepository
+from enchanted_motorbike.database.sensor_data_repository import SensorDataRepository

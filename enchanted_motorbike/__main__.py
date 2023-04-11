@@ -2,7 +2,7 @@ import argparse
 
 from enchanted_motorbike.controller import run_controller
 from enchanted_motorbike.manipulator import ManipulatorServer
-from enchanted_motorbike.sensor import run_sensor
+from enchanted_motorbike.sensor import Sensor
 
 
 def main() -> None:
@@ -24,7 +24,7 @@ def main() -> None:
         ManipulatorServer.run()
 
     if args.sensor:
-        run_sensor()
+        Sensor.run()
 
 
 if __name__ == "__main__":
