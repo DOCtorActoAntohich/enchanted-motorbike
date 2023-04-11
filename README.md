@@ -18,6 +18,9 @@ You need Python 3.10 or newer to run this project.
 
 First, make a new poetry environment and do `poetry install` to resolve dependencies.
 
+Finally, make a copy of `.env.example` named `.env` in the same directory.
+Adjust values as you see fit.
+
 ### Components
 
 The project consists of three modules - sensor, controller, and manipulator.
