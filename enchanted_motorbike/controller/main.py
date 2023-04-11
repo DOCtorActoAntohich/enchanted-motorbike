@@ -4,7 +4,7 @@ from fastapi import Depends, FastAPI
 from enchanted_motorbike.controller.manipulator_state_decision import (
     decide_manipulator_state,
 )
-from enchanted_motorbike.database import SensorDataCollection
+from enchanted_motorbike.database import SensorDataRepository
 from enchanted_motorbike.models import SensorData
 from enchanted_motorbike.settings import settings
 
@@ -13,8 +13,8 @@ app = FastAPI()
 
 @app.post("/sensor-data")
 async def post_sensor_data(
-    sensor_data: SensorData,
-    collection: SensorDataCollection = Depends(SensorDataCollection.create),
+        sensor_data: SensorData,
+        collection: SensorDataRepository = Depends(SensorDataRepository.create),
 ) -> None:
     await collection.save(sensor_data)
 

@@ -8,13 +8,13 @@ from enchanted_motorbike.database.mongo import get_sensor_data_collection
 from enchanted_motorbike.models import SensorData
 
 
-class SensorDataCollection:
+class SensorDataRepository:
     @classmethod
-    def create(cls) -> SensorDataCollection:
+    def create(cls) -> SensorDataRepository:
         return cls(get_sensor_data_collection())
 
-    def __init__(self, motor_collection: AsyncIOMotorCollection) -> None:
-        self.__collection = motor_collection
+    def __init__(self, collection: AsyncIOMotorCollection) -> None:
+        self.__collection = collection
 
     async def save(self, sensor_data: SensorData) -> None:
         self.__collection.insert_one(sensor_data.dict())
