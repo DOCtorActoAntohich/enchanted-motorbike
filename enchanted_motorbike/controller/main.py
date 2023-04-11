@@ -1,14 +1,14 @@
+import asyncio
 from datetime import datetime
+import subprocess
 
-import uvicorn
 from fastapi import Depends, FastAPI
 
 from enchanted_motorbike.controller.manipulator_state_decision import (
-    decide_manipulator_state,
+    decide_manipulator_state, run_decider_thing
 )
 from enchanted_motorbike.database import SensorDataRepository, ManipulatorStatesRepository
 from enchanted_motorbike.models import SensorData, ManipulatorStateDecision
-from enchanted_motorbike.settings import settings
 
 app = FastAPI()
 
@@ -36,4 +36,17 @@ async def on_startup() -> None:
 
 
 def run_controller() -> None:
-    uvicorn.run(app, host="", port=settings.controller.port, log_level="warning")
+    proc = subprocess.Popen([
+        "gunicorn",
+        "enchanted_motorbike.controller.main:app",
+        "--workers",
+        "4",
+        "--worker-class",
+        "uvicorn.workers.UvicornWorker",
+        "--bind",
+        "0.0.0.0:8000"
+    ])
+
+    asyncio.run(run_decider_thing())
+
+    proc.kill()

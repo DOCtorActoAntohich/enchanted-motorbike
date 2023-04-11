@@ -9,9 +9,12 @@ from enchanted_motorbike.time import utc_time_now
 from enchanted_motorbike.database import ManipulatorStatesRepository, SensorDataRepository
 
 
-@fastapi_utils.tasks.repeat_every(
-    seconds=settings.controller.decision_interval_seconds, wait_first=True
-)
+async def run_decider_thing() -> None:
+    while True:
+        await asyncio.sleep(settings.controller.decision_interval_seconds)
+        await decide_manipulator_state()
+
+
 async def decide_manipulator_state() -> None:
     manipulator_repository = ManipulatorStatesRepository.create()
     latest_decision = await manipulator_repository.latest()
@@ -21,6 +24,8 @@ async def decide_manipulator_state() -> None:
         after=latest_decision.made_at if latest_decision is not None else time_now - timedelta(seconds=10),
         before=time_now
     )
+    if new_state is None:
+        return
     new_decision = ManipulatorStateDecision(made_at=time_now, state=new_state)
 
     if latest_decision is None or new_decision.state != latest_decision.state:
@@ -29,9 +34,13 @@ async def decide_manipulator_state() -> None:
     await _send_to_manipulator(new_decision)
 
 
-async def _calculate_new_state(after: datetime, before: datetime) -> str:
+async def _calculate_new_state(after: datetime, before: datetime) -> str | None:
     sensor_repository = SensorDataRepository.create()
-    x, y = await sensor_repository.average(after, before)
+    data = await sensor_repository.average(after, before)
+    if data is None:
+        return None
+
+    x, y = data
 
     await sensor_repository.delete_all_before(before)
 

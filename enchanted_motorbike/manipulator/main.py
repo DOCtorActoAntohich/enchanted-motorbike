@@ -1,4 +1,3 @@
-import contextlib
 import logging
 import socket
 
@@ -16,8 +15,7 @@ class ManipulatorServer:
     def run(cls) -> None:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
             server_socket.bind(("", settings.manipulator.port))
-            with contextlib.suppress(KeyboardInterrupt):
-                cls.__listen_forever(server_socket)
+            cls.__listen_forever(server_socket)
 
     @classmethod
     def __listen_forever(cls, server_socket: socket.socket) -> None:
