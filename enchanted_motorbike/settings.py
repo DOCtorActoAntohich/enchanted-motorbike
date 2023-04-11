@@ -20,10 +20,17 @@ class _Manipulator(BaseSettings):
         return self.host, self.port
 
 
-class _Redis(BaseSettings):
-    host: str = Field(env="REDIS_HOST")
-    password: str = Field(env="REDIS_PASSWORD")
-    port: int = Field(6379)
+class _Mongo(BaseSettings):
+    host: str = Field(env="MONGO_HOST")
+    username: str = Field(env="MONGO_USERNAME")
+    password: str = Field(env="MONGO_PASSWORD")
+    port: int = Field(27017)
+
+    @property
+    def url(self) -> str:
+        credentials = f"{self.username}:{self.password}"
+        address = f"{self.host}:{self.port}"
+        return f"mongodb://{credentials}@{address}"
 
     class Config:
         env_file = ".env"
@@ -32,7 +39,7 @@ class _Redis(BaseSettings):
 class _Settings(BaseSettings):
     controller = _Controller()
     manipulator = _Manipulator()
-    redis = _Redis()
+    mongo = _Mongo()
 
 
 settings = _Settings()

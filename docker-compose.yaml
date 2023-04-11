@@ -8,10 +8,12 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - manipulator
-      - redis
+      - mongo_db
     env_file:
       - ".env"
     command: --controller
+    ports:
+      - "8000:8000"
 
   manipulator:
     container_name: manipulator
@@ -33,13 +35,16 @@ services:
     env_file:
       - ".env"
 
-  redis:
-    container_name: ${REDIS_HOST}
-    image: redis
+  mongo_db:
+    container_name: ${MONGO_HOST}
+    image: 'mongo'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    command: --quiet --logpath /dev/null
     restart: unless-stopped
-    command: --requirepass ${REDIS_PASSWORD}
     volumes:
-      - storage:/data:rw
+      - storage:/data/db:rw
 
 volumes:
   storage:

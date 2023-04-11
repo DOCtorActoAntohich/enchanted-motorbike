@@ -1,22 +1,20 @@
 import asyncio
+import random
 
 import httpx
-import random
-from datetime import datetime, timezone
 
 from enchanted_motorbike.models import SensorData
 from enchanted_motorbike.settings import settings
+from enchanted_motorbike.time import utc_time_now
 
 
 def random_position() -> int:
-    return random.randint(-100, 100)
+    return random.randint(-100, 100)  # noqa: S311
 
 
 def random_data_sample() -> SensorData:
     return SensorData(
-        observed_at=datetime.now(tz=timezone.utc),
-        x=random_position(),
-        y=random_position()
+        observed_at=utc_time_now(), x=random_position(), y=random_position()
     )
 
 
@@ -25,12 +23,12 @@ async def send_bagillion_requests() -> None:
         while True:
             await client.post(
                 f"{settings.controller.full_hostname}/sensor-data",
-                content=random_data_sample().json()
+                content=random_data_sample().json(),
             )
             await asyncio.sleep(1)
 
 
-async def run():
+async def run() -> None:
     try:
         await send_bagillion_requests()
     except KeyboardInterrupt:

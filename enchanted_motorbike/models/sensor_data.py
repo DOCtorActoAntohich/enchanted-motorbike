@@ -9,6 +9,4 @@ class SensorData(BaseModel):
     y: int = Field()
 
     class Config:
-        json_encoders = {
-            datetime: lambda d: d.isoformat()
-        }
+        json_encoders = {datetime: lambda d: d.isoformat()}

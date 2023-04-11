@@ -1,1 +1,1 @@
-from enchanted_motorbike.manipulator.main import run_manipulator
+from enchanted_motorbike.manipulator.main import ManipulatorServer
