@@ -5,6 +5,7 @@ x-sensor: &sensor
     context: .
     dockerfile: Dockerfile
   command: --sensor
+  restart: on-failure
   depends_on:
     - controller
   env_file:
@@ -19,6 +20,7 @@ services:
     depends_on:
       - manipulator
       - mongo_db
+    restart: on-failure
     env_file:
       - ".env"
     command: --controller
@@ -30,6 +32,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    restart: on-failure
     command: --manipulator
     env_file:
       - ".env"
