@@ -1,11 +1,13 @@
+from datetime import datetime
+
 import uvicorn
 from fastapi import Depends, FastAPI
 
 from enchanted_motorbike.controller.manipulator_state_decision import (
     decide_manipulator_state,
 )
-from enchanted_motorbike.database import SensorDataRepository
-from enchanted_motorbike.models import SensorData
+from enchanted_motorbike.database import SensorDataRepository, ManipulatorStatesRepository
+from enchanted_motorbike.models import SensorData, ManipulatorStateDecision
 from enchanted_motorbike.settings import settings
 
 app = FastAPI()
@@ -14,14 +16,18 @@ app = FastAPI()
 @app.post("/sensor-data")
 async def post_sensor_data(
         sensor_data: SensorData,
-        collection: SensorDataRepository = Depends(SensorDataRepository.create),
+        repository: SensorDataRepository = Depends(SensorDataRepository.create),
 ) -> None:
-    await collection.save(sensor_data)
+    await repository.save(sensor_data)
 
 
 @app.get("/history")
-async def get_history() -> None:
-    raise NotImplementedError
+async def get_history(
+        after: datetime | None,
+        before: datetime | None,
+        repository: ManipulatorStatesRepository = Depends(ManipulatorStatesRepository.create),
+) -> list[ManipulatorStateDecision]:
+    return await repository.history(after=after, before=before)
 
 
 @app.on_event("startup")

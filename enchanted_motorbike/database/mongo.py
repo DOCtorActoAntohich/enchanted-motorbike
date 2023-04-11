@@ -11,7 +11,14 @@ _database: AsyncIOMotorDatabase = _client.get_database("enchanted_motorbike")
 _sensor_data_collection: AsyncIOMotorCollection = _database.get_collection(
     "sensor_data"
 )
+_manipulator_states_collection: AsyncIOMotorCollection = _database.get_collection(
+    "manipulator_states"
+)
 
 
 def get_sensor_data_collection() -> AsyncIOMotorCollection:
     return _sensor_data_collection
+
+
+def get_manipulator_states_collection() -> AsyncIOMotorCollection:
+    return _manipulator_states_collection

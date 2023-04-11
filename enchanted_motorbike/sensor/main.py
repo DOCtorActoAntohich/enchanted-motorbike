@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import random
 
 import httpx
@@ -12,9 +13,19 @@ def random_position() -> int:
     return random.randint(-100, 100)  # noqa: S311
 
 
+i = 0
+
+
 def random_data_sample() -> SensorData:
+    global i
+    x = 10
+    if 0 <= i < 3:
+        x = 10
+    elif 3 <= i < 6:
+        x = -10
+    i = (i + 1) % 6
     return SensorData(
-        observed_at=utc_time_now(), x=random_position(), y=random_position()
+        observed_at=utc_time_now(), x=x, y=10
     )
 
 
